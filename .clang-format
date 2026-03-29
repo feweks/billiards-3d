@@ -7,3 +7,4 @@ DerivePointerAlignment: false
 PointerAlignment: Right
 IncludeBlocks: Preserve
 SortIncludes: Never
+RequiresClausePosition: WithPreceding
