@@ -1,0 +1,5 @@
+.clangd
+external/*
+build/*
+bin/*
+.cache/*
