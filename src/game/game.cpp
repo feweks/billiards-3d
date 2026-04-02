@@ -5,12 +5,12 @@
 #include "game/states/game_state.hpp"
 #include "game/states/main_menu_state.hpp"
 #include <raylib.h>
+#include <rlImGui.h>
 #include <format>
 #include <memory>
-#include <type_traits>
 
+std::unique_ptr<game::states::GameState> game::cur_state;
 game::Config config;
-std::unique_ptr<game::states::GameState> cur_state;
 RenderTexture2D render_tex;
 const float DT_THRESHOLD = 0.3;
 
@@ -25,8 +25,8 @@ void game::init() {
     InitAudioDevice();
 
     resources::init();
-
     render_tex = LoadRenderTexture(config.render_width, config.render_height);
+    rlImGuiSetup(true);
 
     change_state<game::states::MainMenuState>();
 }
@@ -37,8 +37,8 @@ void update(float dt) {
         dt = DT_THRESHOLD;
     }
 
-    if (cur_state) {
-        cur_state->update(dt);
+    if (game::cur_state) {
+        game::cur_state->update(dt);
     }
 }
 
@@ -46,12 +46,12 @@ void draw() {
     BeginTextureMode(render_tex);
     ClearBackground(BLACK);
 
-    if (cur_state) {
-        BeginMode3D(cur_state->camera);
-        cur_state->draw();
+    if (game::cur_state) {
+        BeginMode3D(game::cur_state->camera);
+        game::cur_state->draw();
         EndMode3D();
 
-        cur_state->draw_ui();
+        game::cur_state->draw_ui();
     }
 
     EndTextureMode();
@@ -63,6 +63,12 @@ void draw() {
 
     DrawTexturePro(rtt, src, dest, (Vector2){0, 0}, 0, WHITE);
 
+    if (game::cur_state) {
+        rlImGuiBegin();
+        game::cur_state->draw_imgui();
+        rlImGuiEnd();
+    }
+
     DrawFPS(5, 3);
 
     EndDrawing();
@@ -73,21 +79,6 @@ void game::run() {
         update(GetFrameTime());
         draw();
     }
-}
-
-template <typename T>
-requires std::is_base_of_v<game::states::GameState, T>
-void game::change_state() {
-    std::string prev_name = "NULL";
-    if (cur_state) {
-        prev_name = cur_state->get_name();
-        cur_state->destroy();
-    }
-
-    cur_state = std::make_unique<T>();
-    cur_state->create();
-
-    trace_log(TraceLogLevel::LOG_INFO, std::format("Changed state [{} -> {}]", prev_name, cur_state->get_name()));
 }
 
 const game::Config &game::get_config() { return config; }

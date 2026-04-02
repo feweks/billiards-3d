@@ -19,6 +19,7 @@ class GameState {
     virtual void update(float dt);
     virtual void draw();
     virtual void draw_ui();
+    virtual void draw_imgui() = 0;
 
     std::shared_ptr<entities::Entity> entity_create(const std::string &type, Vector3 pos, Vector3 rot = Vector3Zero(), Vector3 scale = Vector3One());
     void entity_place(std::shared_ptr<entities::Entity> ent);

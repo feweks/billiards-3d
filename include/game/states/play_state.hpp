@@ -3,9 +3,9 @@
 #include "game/states/game_state.hpp"
 
 namespace game::states {
-class MainMenuState : public GameState {
+class PlayState : public GameState {
    public:
-    MainMenuState();
+    PlayState();
 
     void create() override;
 

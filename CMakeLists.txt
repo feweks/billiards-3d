@@ -15,7 +15,7 @@ include(FetchContent)
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG master
+    GIT_TAG 5.5
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/raylib
 )
 
@@ -30,17 +30,60 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(nlohmann_json)
 
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.92.7
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/imgui
+)
+
+FetchContent_MakeAvailable(imgui)
+
+FetchContent_Declare(
+    rlimgui
+    GIT_REPOSITORY https://github.com/raylib-extras/rlImGui.git
+    GIT_TAG main
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/rlImGui
+)
+
+FetchContent_MakeAvailable(rlimgui)
+
+add_library(imgui
+    ${CMAKE_SOURCE_DIR}/external/imgui/imgui.cpp
+    ${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp
+    ${CMAKE_SOURCE_DIR}/external/imgui/imgui_widgets.cpp
+    ${CMAKE_SOURCE_DIR}/external/imgui/imgui_tables.cpp
+)
+
+target_include_directories(imgui PUBLIC
+    ${CMAKE_SOURCE_DIR}/external/imgui
+)
+
+add_library(rlimgui
+    ${CMAKE_SOURCE_DIR}/external/rlImGui/rlImGui.cpp
+)
+
+target_include_directories(rlimgui PUBLIC
+    ${CMAKE_SOURCE_DIR}/external/rlImGui
+    ${CMAKE_SOURCE_DIR}/external/imgui
+)
+
+target_link_libraries(rlimgui
+    raylib
+    imgui
+)
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/external/raylib/src
-    ${CMAKE_SOURCE_DIR}/external/nlohmann-json/include
 )
 
 target_link_libraries(${PROJECT_NAME}
     raylib
     nlohmann_json::nlohmann_json
+    imgui
+    rlimgui
 )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
