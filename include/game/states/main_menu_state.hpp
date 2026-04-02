@@ -10,9 +10,7 @@ class MainMenuState : public GameState {
     void create() override;
 
     void update(float dt) override;
-
     void draw() override;
-
     void draw_ui() override;
 
     void destroy() override;

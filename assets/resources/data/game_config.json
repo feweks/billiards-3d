@@ -1,5 +1,5 @@
 {
-    "render_resolution": [1280, 720],
+    "render_resolution": [960, 540],
     "title": "Billiards 3D",
     "flags": [4, 64, 256]
 }

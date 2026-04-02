@@ -1,6 +1,8 @@
 #include "game/states/game_state.hpp"
+#include "game/entities/entity.hpp"
 #include "game/game.hpp"
 #include <raylib.h>
+#include <memory>
 #include <string>
 #include <format>
 
@@ -20,9 +22,17 @@ void GameState::update(float dt) {
     if (IsKeyReleased(KEY_F3)) {
         draw_debug_info = !draw_debug_info;
     }
+
+    for (const auto &ent : entities) {
+        ent->update(dt);
+    }
 }
 
-void GameState::draw() {}
+void GameState::draw() {
+    for (const auto &ent : entities) {
+        ent->draw();
+    }
+}
 
 void GameState::draw_ui() {
     if (!draw_debug_info) return;
@@ -32,6 +42,12 @@ void GameState::draw_ui() {
                                   GetScreenWidth(), GetScreenHeight(), IsWindowFullscreen());
     DrawText(msg.c_str(), 5, 24, 12, ColorAlpha(WHITE, 0.75f));
 }
+
+std::shared_ptr<entities::Entity> GameState::entity_create(const std::string &type, Vector3 pos, Vector3 rot, Vector3 scale) {
+    return std::make_shared<entities::Entity>(type, pos, rot, scale);
+}
+
+void GameState::entity_place(std::shared_ptr<entities::Entity> ent) { entities.push_back(ent); }
 
 const std::string GameState::get_name() const { return name; }
 }  // namespace game::states
