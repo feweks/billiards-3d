@@ -25,8 +25,6 @@ Entity::Entity(const std::string &type, Vector3 pos, Vector3 rot, Vector3 scale)
 void Entity::update(float dt) { mdl_data.transform = update_transform(); }
 
 void Entity::draw() {
-    trace_log(TraceLogLevel::LOG_INFO, std::format("{}", IsModelValid(mdl_data)));
-
     if (!data.culling) rlDisableBackfaceCulling();
     if (draw_wired)
         DrawModelWires(mdl_data, (Vector3){0, 0, 0}, 1, tint);
