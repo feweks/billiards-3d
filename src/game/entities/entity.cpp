@@ -11,6 +11,7 @@ Entity::Entity(const std::string &type, Vector3 pos, Vector3 rot, Vector3 scale)
     this->position = pos;
     this->rotation = rot;
     this->scale = scale;
+    this->velocity = Vector3Zero();
 
     this->type = type;
     tint = WHITE;
@@ -22,7 +23,41 @@ Entity::Entity(const std::string &type, Vector3 pos, Vector3 rot, Vector3 scale)
     }
 }
 
-void Entity::update(float dt) { mdl_data.transform = update_transform(); }
+void Entity::set_material_texture(Texture2D tex, MaterialMapIndex type, int idx) {
+    if (!IsModelValid(mdl_data)) return;
+
+    if (idx < 0) {
+        for (int i = 0; i < mdl_data.materialCount; i++) {
+            SetMaterialTexture(&mdl_data.materials[i], type, tex);
+        }
+        return;
+    }
+
+    if (idx <= mdl_data.materialCount) return;
+
+    SetMaterialTexture(&mdl_data.materials[idx], type, tex);
+}
+
+void Entity::set_material_shader(Shader shd, int idx) {
+    if (!IsModelValid(mdl_data)) return;
+
+    if (idx < 0) {
+        for (int i = 0; i < mdl_data.materialCount; i++) {
+            mdl_data.materials[i].shader = shd;
+        }
+
+        return;
+    }
+
+    if (idx <= mdl_data.materialCount) return;
+
+    mdl_data.materials[idx].shader = shd;
+}
+
+void Entity::update(float dt) {
+    position += velocity;
+    mdl_data.transform = update_transform();
+}
 
 void Entity::draw() {
     if (!data.culling) rlDisableBackfaceCulling();

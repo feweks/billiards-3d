@@ -16,11 +16,30 @@ GameState::GameState(const std::string &name, Vector3 cam_pos, Vector3 cam_targe
         .fovy = 75,
         .projection = CameraProjection::CAMERA_PERSPECTIVE,
     };
+
+    EnableCursor();
 }
 
 void GameState::update(float dt) {
+    if (IsKeyReleased(KEY_F1)) {
+        entities::Entity::draw_wired = !entities::Entity::draw_wired;
+    }
+
+    if (IsKeyReleased(KEY_F2)) {
+        // TODO: implement collision drawing
+    }
+
     if (IsKeyReleased(KEY_F3)) {
         draw_debug_info = !draw_debug_info;
+    }
+
+    if (IsKeyReleased(KEY_F4)) {
+        if (mouse_locked)
+            EnableCursor();
+        else
+            DisableCursor();
+
+        mouse_locked = !mouse_locked;
     }
 
     for (const auto &ent : entities) {

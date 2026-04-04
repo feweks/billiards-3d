@@ -48,6 +48,7 @@ void draw() {
 
     if (game::cur_state) {
         BeginMode3D(game::cur_state->camera);
+
         game::cur_state->draw();
         EndMode3D();
 

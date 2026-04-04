@@ -30,6 +30,7 @@ class GameState {
 
    private:
     bool draw_debug_info = false;
+    bool mouse_locked = false;
     std::string name;
     std::vector<std::shared_ptr<entities::Entity>> entities;
 };
